@@ -23,9 +23,19 @@ const verifyUser = (req, res, next) => {
 };
 
 const insertPayload = (req, res, next) => {
-
+  const { nickname, species, h2oFrequency, imageURL:imageUrl } = req.body;
+  let imageURL;
+  const user_id = req.user_id;
+  if(!nickname || !species || !h2oFrequency) res.status(400).json({message: "You must include a nickname, species, and h2oFrequency"});
+  else if(typeof nickname !== "string" || typeof species !== "string" || typeof h2oFrequency !== "string") res.status(400).json({message: "nickname, species, and h2oFrequency must be of type string"});
+  else {
+    if(!imageUrl || typeof imageUrl !== "string") imageURL = null; else imageURL = imageUrl;
+    req.payload = {nickname, species, h2oFrequency, imageURL, user_id};
+    next();
+  }
 }
 
 module.exports = {
-  verifyUser
+  verifyUser,
+  insertPayload
 };
