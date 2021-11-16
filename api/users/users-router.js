@@ -34,9 +34,4 @@ router.put("/update", verifyUser, updatePayload, (req, res) => {
     }).catch(err => res.status(500).json({where:"updating user", message:err.message, stack:err.stack}));
 })
 
-//TEMP
-router.get("/", (req, res) => {
-  model.getAll().then(users => res.status(200).json(users));
-})
-
 module.exports = router;
