@@ -53,10 +53,27 @@ const updatePayload = (req, res, next) => {
       }
     })
   }
-}
+};
+
+const deletePayload = (req, res, next) => {
+  const { id } = req.body;
+  const user_id = req.user_id;
+  if(!id || typeof id !== "number") res.status(400).json({message:"You must include a valid id"});
+  else {
+    plantsModel.getById(id).then(plant => {
+      if(!plant) res.status(200).json({message:`plant of id ${id} already does not exist`})
+      else if(plant.user_id !== user_id) res.status(401).json({message:"You may not delete this plant as it is not your plant"});
+      else {
+        req.payload = id;
+        next();
+      }
+    })
+  }
+};
 
 module.exports = {
   verifyUser,
   insertPayload,
-  updatePayload
+  updatePayload,
+  deletePayload
 };
