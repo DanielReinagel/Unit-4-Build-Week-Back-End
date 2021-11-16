@@ -21,8 +21,8 @@ router.post("/login", loginPayload, (req, res) => {
 router.post("/signup", signupPayload, (req, res) => {
   model.insert(req.payload)
     .then(user => {
-      const token = jwt.sign({subject: req.payload.username}, secret, {expiresIn:"1d"});
-      res.status(201).json({message:`Welcome to your new account ${req.payload.username}`, token});
+      const token = jwt.sign({subject: user.username}, secret, {expiresIn:"1d"});
+      res.status(201).json({message:`Welcome to your new account ${user.username}`, token});
     }).catch(err => res.status(500).json({where:"adding user", message:err.message, stack:err.stack}));
 })
 
