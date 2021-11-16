@@ -25,7 +25,19 @@ const loginPayload = (req, res, next) => {
   }
 }
 
+const updatePayload = (req, res, next) => {
+  const { phoneNumber, password } = req.body;
+  const { id, username } = req.user;
+  if(!phoneNumber||!password) res.status(400).json({message:"You must include a phoneNumber and password"});
+  else if(typeof phoneNumber !== "string" || typeof password !== "string") res.status(400).json({message:"phoneNumber and password must be of type string"});
+  else {
+    req.payload = {id, username, phoneNumber, password: bcrypt.hashSync(password, 8)};
+    next();
+  }
+}
+
 module.exports = {
   signupPayload,
-  loginPayload
+  loginPayload,
+  updatePayload
 };

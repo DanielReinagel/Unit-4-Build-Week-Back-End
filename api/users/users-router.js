@@ -3,7 +3,8 @@ const model = require("./users-model");
 const jwt = require("jsonwebtoken");
 const secret = require("../secret");
 const bcrypt = require("bcryptjs");
-const { signupPayload, loginPayload } = require("./users-middleware");
+const { signupPayload, loginPayload, updatePayload } = require("./users-middleware");
+const { verifyUser } = require("../plants/plants-middleware");
 
 router.post("/login", loginPayload, (req, res) => {
   const { username, password } = req.payload;
@@ -24,6 +25,18 @@ router.post("/signup", signupPayload, (req, res) => {
       const token = jwt.sign({subject: user.username}, secret, {expiresIn:"1d"});
       res.status(201).json({message:`Welcome to your new account ${user.username}`, token});
     }).catch(err => res.status(500).json({where:"adding user", message:err.message, stack:err.stack}));
+})
+
+router.put("/update", verifyUser, updatePayload, (req, res) => {
+  model.update(req.payload)
+    .then(() => {
+      res.status(200).json({message: "Your account has been updated"});
+    }).catch(err => res.status(500).json({where:"updating user", message:err.message, stack:err.stack}));
+})
+
+//TEMP
+router.get("/", (req, res) => {
+  model.getAll().then(users => res.status(200).json(users));
 })
 
 module.exports = router;
